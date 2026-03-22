@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
-const bcrypt_1 = __importDefault(require("bcrypt"));
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const SALT_ROUNDS = 12;
 const ACCESS_TOKEN_EXPIRY = '15m';
 const REFRESH_TOKEN_EXPIRY = '7d';
@@ -22,7 +22,7 @@ class AuthService {
         if (existing) {
             throw { statusCode: 409, message: 'Email already in use' };
         }
-        const passwordHash = await bcrypt_1.default.hash(input.password, SALT_ROUNDS);
+        const passwordHash = await bcryptjs_1.default.hash(input.password, SALT_ROUNDS);
         const user = await this.prisma.user.create({
             data: {
                 email: input.email,
@@ -47,7 +47,7 @@ class AuthService {
         if (!user) {
             throw { statusCode: 401, message: 'Invalid email or password' };
         }
-        const isValid = await bcrypt_1.default.compare(input.password, user.passwordHash);
+        const isValid = await bcryptjs_1.default.compare(input.password, user.passwordHash);
         if (!isValid) {
             throw { statusCode: 401, message: 'Invalid email or password' };
         }
@@ -107,10 +107,10 @@ class AuthService {
         const user = await this.prisma.user.findUnique({ where: { id: userId } });
         if (!user)
             throw { statusCode: 404, message: 'User not found' };
-        const isValid = await bcrypt_1.default.compare(currentPassword, user.passwordHash);
+        const isValid = await bcryptjs_1.default.compare(currentPassword, user.passwordHash);
         if (!isValid)
             throw { statusCode: 400, message: 'Current password is incorrect' };
-        const passwordHash = await bcrypt_1.default.hash(newPassword, SALT_ROUNDS);
+        const passwordHash = await bcryptjs_1.default.hash(newPassword, SALT_ROUNDS);
         await this.prisma.user.update({ where: { id: userId }, data: { passwordHash } });
         return { message: 'Password changed successfully' };
     }

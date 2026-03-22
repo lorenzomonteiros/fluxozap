@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify'
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 import { PrismaClient } from '@prisma/client'
 import { RegisterInput, LoginInput } from '@flowzap/shared'
 
