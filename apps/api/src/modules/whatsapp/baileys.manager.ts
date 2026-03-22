@@ -219,7 +219,7 @@ export class BaileysManager {
     if (options.caption) mediaContent.caption = options.caption
     if (options.filename) mediaContent.fileName = options.filename
 
-    await state.socket.sendMessage(jid, { [type]: mediaContent } as Parameters<typeof state.socket.sendMessage>[1])
+    await state.socket.sendMessage(jid, { [type]: mediaContent } as unknown as Parameters<typeof state.socket.sendMessage>[1])
   }
 
   private async handleIncomingMessage(

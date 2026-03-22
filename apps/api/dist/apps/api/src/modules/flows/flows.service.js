@@ -1,0 +1,115 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.FlowsService = void 0;
+class FlowsService {
+    prisma;
+    constructor(fastify) {
+        this.prisma = fastify.prisma;
+    }
+    async getFlows(userId) {
+        const flows = await this.prisma.flow.findMany({
+            where: { userId },
+            orderBy: { updatedAt: 'desc' },
+            include: {
+                _count: { select: { executions: true } },
+            },
+        });
+        return flows.map((f) => ({
+            id: f.id,
+            name: f.name,
+            description: f.description,
+            isActive: f.isActive,
+            trigger: f.trigger,
+            createdAt: f.createdAt,
+            updatedAt: f.updatedAt,
+            executionCount: f._count.executions,
+        }));
+    }
+    async getFlow(userId, flowId) {
+        const flow = await this.prisma.flow.findFirst({
+            where: { id: flowId, userId },
+        });
+        if (!flow) {
+            throw { statusCode: 404, message: 'Flow not found' };
+        }
+        return flow;
+    }
+    async createFlow(userId, input) {
+        const flow = await this.prisma.flow.create({
+            data: {
+                userId,
+                name: input.name,
+                description: input.description ?? null,
+                trigger: input.trigger,
+                nodes: (input.nodes ?? []),
+                edges: (input.edges ?? []),
+                isActive: false,
+            },
+        });
+        return flow;
+    }
+    async updateFlow(userId, flowId, input) {
+        const existing = await this.prisma.flow.findFirst({ where: { id: flowId, userId } });
+        if (!existing)
+            throw { statusCode: 404, message: 'Flow not found' };
+        const updated = await this.prisma.flow.update({
+            where: { id: flowId },
+            data: {
+                ...(input.name !== undefined && { name: input.name }),
+                ...(input.description !== undefined && { description: input.description }),
+                ...(input.trigger !== undefined && { trigger: input.trigger }),
+                ...(input.nodes !== undefined && { nodes: input.nodes }),
+                ...(input.edges !== undefined && { edges: input.edges }),
+            },
+        });
+        return updated;
+    }
+    async deleteFlow(userId, flowId) {
+        const existing = await this.prisma.flow.findFirst({ where: { id: flowId, userId } });
+        if (!existing)
+            throw { statusCode: 404, message: 'Flow not found' };
+        await this.prisma.flow.delete({ where: { id: flowId } });
+        return { message: 'Flow deleted successfully' };
+    }
+    async toggleFlow(userId, flowId, isActive) {
+        const existing = await this.prisma.flow.findFirst({ where: { id: flowId, userId } });
+        if (!existing)
+            throw { statusCode: 404, message: 'Flow not found' };
+        const updated = await this.prisma.flow.update({
+            where: { id: flowId },
+            data: { isActive },
+        });
+        return updated;
+    }
+    async getExecutions(userId, flowId) {
+        const flow = await this.prisma.flow.findFirst({ where: { id: flowId, userId } });
+        if (!flow)
+            throw { statusCode: 404, message: 'Flow not found' };
+        const executions = await this.prisma.flowExecution.findMany({
+            where: { flowId },
+            orderBy: { startedAt: 'desc' },
+            take: 100,
+            include: {
+                contact: { select: { id: true, phone: true, name: true } },
+            },
+        });
+        return executions;
+    }
+    async getStats(userId) {
+        const [totalFlows, activeFlows, totalExecutions] = await Promise.all([
+            this.prisma.flow.count({ where: { userId } }),
+            this.prisma.flow.count({ where: { userId, isActive: true } }),
+            this.prisma.flowExecution.count({
+                where: { flow: { userId } },
+            }),
+        ]);
+        const recentExecutions = await this.prisma.flowExecution.findMany({
+            where: { flow: { userId } },
+            orderBy: { startedAt: 'desc' },
+            take: 7,
+            select: { startedAt: true, status: true },
+        });
+        return { totalFlows, activeFlows, totalExecutions, recentExecutions };
+    }
+}
+exports.FlowsService = FlowsService;

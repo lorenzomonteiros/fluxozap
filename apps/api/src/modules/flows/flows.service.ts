@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify'
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, Prisma } from '@prisma/client'
 import { CreateFlowInput, UpdateFlowInput } from '@flowzap/shared'
 
 export class FlowsService {
@@ -48,9 +48,9 @@ export class FlowsService {
         userId,
         name: input.name,
         description: input.description ?? null,
-        trigger: input.trigger,
-        nodes: input.nodes ?? [],
-        edges: input.edges ?? [],
+        trigger: input.trigger as Prisma.InputJsonValue,
+        nodes: (input.nodes ?? []) as Prisma.InputJsonValue,
+        edges: (input.edges ?? []) as Prisma.InputJsonValue,
         isActive: false,
       },
     })
@@ -66,9 +66,9 @@ export class FlowsService {
       data: {
         ...(input.name !== undefined && { name: input.name }),
         ...(input.description !== undefined && { description: input.description }),
-        ...(input.trigger !== undefined && { trigger: input.trigger }),
-        ...(input.nodes !== undefined && { nodes: input.nodes }),
-        ...(input.edges !== undefined && { edges: input.edges }),
+        ...(input.trigger !== undefined && { trigger: input.trigger as Prisma.InputJsonValue }),
+        ...(input.nodes !== undefined && { nodes: input.nodes as Prisma.InputJsonValue }),
+        ...(input.edges !== undefined && { edges: input.edges as Prisma.InputJsonValue }),
       },
     })
     return updated

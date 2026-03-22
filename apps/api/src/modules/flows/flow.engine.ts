@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, Prisma } from '@prisma/client'
 import { BaileysManager } from '../whatsapp/baileys.manager'
 import axios from 'axios'
 
@@ -66,8 +66,8 @@ export class FlowEngine {
       triggerData,
     }
 
-    const nodes = flow.nodes as FlowNode[]
-    const edges = flow.edges as FlowEdge[]
+    const nodes = (flow.nodes as unknown) as FlowNode[]
+    const edges = (flow.edges as unknown) as FlowEdge[]
 
     try {
       const triggerNode = nodes.find((n) => n.type === 'trigger')
@@ -232,13 +232,12 @@ export class FlowEngine {
         }
         context.variables[variableName] = varValue
 
+        const currentContact = await this.prisma.contact.findUnique({ where: { id: context.contactId } })
+        const currentVars = (currentContact?.variables as Record<string, unknown>) ?? {}
         await this.prisma.contact.update({
           where: { id: context.contactId },
           data: {
-            variables: {
-              ...(await this.prisma.contact.findUnique({ where: { id: context.contactId } }))?.variables as object ?? {},
-              [variableName]: varValue,
-            },
+            variables: { ...currentVars, [variableName]: varValue } as Prisma.InputJsonValue,
           },
         })
         return this.getNextNode(node.id, edges)
@@ -318,7 +317,7 @@ export class FlowEngine {
         contactId: context.contactId,
         direction: 'outbound',
         type,
-        content,
+        content: content as Prisma.InputJsonValue,
         status: 'sent',
         sentAt: new Date(),
       },

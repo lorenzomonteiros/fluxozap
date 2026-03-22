@@ -5,7 +5,6 @@ import fastifyCookie from '@fastify/cookie'
 import fastifyMultipart from '@fastify/multipart'
 import fastifyRateLimit from '@fastify/rate-limit'
 import fastifyPlugin from 'fastify-plugin'
-import { Redis } from 'ioredis'
 
 import dbPlugin from './plugins/db'
 import authPlugin from './plugins/auth'
@@ -50,18 +49,15 @@ async function buildServer() {
   await fastify.register(authPlugin)
   await fastify.register(socketPlugin)
 
-  const redis = new Redis(REDIS_URL, { maxRetriesPerRequest: null })
-
-  const flowQueue = createFlowQueue(redis)
+  const flowQueue = createFlowQueue(REDIS_URL)
 
   const baileysManager = new BaileysManager(fastify.io, fastify.prisma, flowQueue)
 
-  const worker = startFlowWorker(redis, fastify.prisma, baileysManager)
+  const worker = startFlowWorker(REDIS_URL, fastify.prisma, baileysManager)
 
   fastify.addHook('onClose', async () => {
     await worker.close()
     await flowQueue.close()
-    await redis.quit()
   })
 
   await fastify.register(

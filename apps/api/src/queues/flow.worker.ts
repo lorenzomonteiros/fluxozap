@@ -1,14 +1,18 @@
-import { Worker, Queue, QueueEvents } from 'bullmq'
+import { Worker, Queue } from 'bullmq'
 import { PrismaClient } from '@prisma/client'
 import { FlowEngine } from '../modules/flows/flow.engine'
 import { BaileysManager } from '../modules/whatsapp/baileys.manager'
-import { Redis } from 'ioredis'
 
 const QUEUE_NAME = 'flow-executions'
 
-export function createFlowQueue(redis: Redis) {
+// Use URL-based connection to avoid ioredis version conflicts with BullMQ's bundled ioredis
+function getConnection(redisUrl: string) {
+  return { url: redisUrl }
+}
+
+export function createFlowQueue(redisUrl: string) {
   return new Queue(QUEUE_NAME, {
-    connection: redis,
+    connection: getConnection(redisUrl),
     defaultJobOptions: {
       attempts: 3,
       backoff: { type: 'exponential', delay: 2000 },
@@ -19,7 +23,7 @@ export function createFlowQueue(redis: Redis) {
 }
 
 export function startFlowWorker(
-  redis: Redis,
+  redisUrl: string,
   prisma: PrismaClient,
   manager: BaileysManager
 ): Worker {
@@ -38,7 +42,7 @@ export function startFlowWorker(
       }
     },
     {
-      connection: redis,
+      connection: getConnection(redisUrl),
       concurrency: 10,
     }
   )

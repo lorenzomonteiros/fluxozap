@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify'
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, Prisma } from '@prisma/client'
 import { CreateContactInput, UpdateContactInput } from '@flowzap/shared'
 
 export class ContactsService {
@@ -90,7 +90,7 @@ export class ContactsService {
         name: input.name ?? null,
         email: input.email ?? null,
         tags: input.tags ?? [],
-        variables: input.variables ?? {},
+        variables: (input.variables ?? {}) as Prisma.InputJsonValue,
       },
     })
 
@@ -107,7 +107,7 @@ export class ContactsService {
         ...(input.name !== undefined && { name: input.name ?? null }),
         ...(input.email !== undefined && { email: input.email ?? null }),
         ...(input.tags !== undefined && { tags: input.tags }),
-        ...(input.variables !== undefined && { variables: input.variables }),
+        ...(input.variables !== undefined && { variables: input.variables as Prisma.InputJsonValue }),
       },
     })
 

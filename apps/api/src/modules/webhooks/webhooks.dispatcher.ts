@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, Prisma } from '@prisma/client'
 import { generateHmac } from '../../lib/crypto'
 
 export class WebhookDispatcher {
@@ -66,7 +66,7 @@ export class WebhookDispatcher {
       data: {
         webhookId: webhook.id,
         event,
-        payload,
+        payload: payload as Prisma.InputJsonValue,
         statusCode,
         response: responseText,
         success,
