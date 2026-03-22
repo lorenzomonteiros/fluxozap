@@ -1,0 +1,185 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-main: #0A0A0A;
+  --bg-card: #111111;
+  --bg-elevated: #1A1A1A;
+  --gold: #D4AF37;
+  --gold-soft: #F0C040;
+  --gold-dark: #A08020;
+  --gold-muted: rgba(212, 175, 55, 0.15);
+  --text-primary: #F5F5F0;
+  --text-secondary: #8A8A8A;
+  --border: rgba(212, 175, 55, 0.15);
+  --shadow-card: 0 4px 24px rgba(0,0,0,0.6), 0 0 0 1px rgba(212,175,55,0.08);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #111111;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(212, 175, 55, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(212, 175, 55, 0.5);
+}
+
+/* Selection */
+::selection {
+  background: rgba(212, 175, 55, 0.25);
+  color: var(--text-primary);
+}
+
+/* Focus ring */
+:focus-visible {
+  outline: 2px solid rgba(212, 175, 55, 0.6);
+  outline-offset: 2px;
+}
+
+/* React Flow overrides */
+.react-flow {
+  background: #0A0A0A !important;
+}
+
+.react-flow__background {
+  background-color: #0A0A0A !important;
+}
+
+.react-flow__minimap {
+  background: #111111 !important;
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  border-radius: 8px;
+}
+
+.react-flow__controls {
+  background: #111111 !important;
+  border: 1px solid rgba(212, 175, 55, 0.15) !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+}
+
+.react-flow__controls-button {
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.1) !important;
+  fill: #8A8A8A !important;
+  color: #8A8A8A !important;
+}
+
+.react-flow__controls-button:hover {
+  background: rgba(212, 175, 55, 0.1) !important;
+  fill: #D4AF37 !important;
+}
+
+.react-flow__edge-path {
+  stroke: rgba(212, 175, 55, 0.5) !important;
+  stroke-width: 2 !important;
+}
+
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: #D4AF37 !important;
+}
+
+.react-flow__handle {
+  background: #D4AF37 !important;
+  border: 2px solid #0A0A0A !important;
+  width: 10px !important;
+  height: 10px !important;
+}
+
+.react-flow__connection-path {
+  stroke: #D4AF37 !important;
+}
+
+/* Animations */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.03) 25%,
+    rgba(212, 175, 55, 0.08) 50%,
+    rgba(255, 255, 255, 0.03) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Gold gradient text */
+.text-gold-gradient {
+  background: linear-gradient(135deg, #D4AF37, #F0C040);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glassmorphism */
+.glass {
+  background: rgba(20, 20, 20, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Node styles for React Flow */
+.flow-node {
+  background: #111111;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 12px;
+  min-width: 200px;
+  transition: all 0.2s ease;
+}
+
+.flow-node:hover {
+  border-color: rgba(212, 175, 55, 0.5);
+  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.1);
+}
+
+.flow-node.selected {
+  border-color: #D4AF37;
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+}
+
+/* QR Code container */
+.qr-container img {
+  border-radius: 12px;
+  padding: 8px;
+  background: white;
+}

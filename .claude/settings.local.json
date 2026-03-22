@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -rn \"from ''''.*\\\\bclsx\\\\b''''\" /Users/lorenzobigode/Downloads/flowzap/)",
+      "Bash(npm install:*)",
+      "Bash(sudo chown:*)",
+      "Bash(npm run:*)",
+      "mcp__Claude_Preview__preview_start"
+    ]
+  }
+}
