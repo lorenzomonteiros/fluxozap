@@ -4,6 +4,6 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "npm run db:generate && npm run start"
+    "startCommand": "bash scripts/migrate-and-start.sh"
   }
 }
