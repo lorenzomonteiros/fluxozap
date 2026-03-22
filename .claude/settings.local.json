@@ -11,7 +11,11 @@
       "Bash(sed -i '' \"s/import { PrismaClient } from ''@prisma\\\\/client''/import { PrismaClient, Prisma } from ''@prisma\\\\/client''/\" /Users/lorenzobigode/Downloads/flowzap/apps/api/src/modules/webhooks/webhooks.dispatcher.ts)",
       "Bash(__NEW_LINE_3c3650edf6a0315c__ sed:*)",
       "Bash(/Users/lorenzobigode/Downloads/flowzap/apps/api/src/queues/flow.worker.ts:*)",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "Bash(ls -la /Users/lorenzobigode/Downloads/flowzap/.env*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ]
   }
 }
